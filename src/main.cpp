@@ -12,6 +12,7 @@ const unsigned int g_SCR_HEIGHT = 400;
 GLuint g_VertexArrayObject = 0;
 //__VBO
 GLuint g_VertexBufferObject = 0;
+GLuint g_VertexBufferObjectColors = 0;
 //__program_object_for_the_shaders
 GLuint g_GraphicsPipelineShaderProgram = 0;
 
@@ -130,6 +131,11 @@ void VertexSpecification() {
       0.8f, -0.8f, 0.0f,
       0.0f, 0.8f, 0.0f};
 
+  const std::vector<GLfloat> vertexColors{
+      1.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 1.0f};
+
   //__VBO_are_buffers_on_the_GPU_vram_to_store_the_data
   //__VAO_are_the_way_we_can_access_attributes_to_the_data_stored_in_the_VBO_using_shaders
 
@@ -142,6 +148,7 @@ void VertexSpecification() {
 
   //__generating_VBO
   //__the_VBO_will_store_the_data_on_the_GPU_vram
+  //__setting_the_position_buffer
   glGenBuffers(1, &g_VertexBufferObject);
   //__selecting_the_buffer_object_to_work_within
   //__this_is_like_giving_the_created_buffer_the_label_GL_ARRAY_BUFFER
@@ -150,14 +157,26 @@ void VertexSpecification() {
   //__when_sending_the_data_to_the_target_GL_ARRAY_BUFFER_it_store_it_in_the_bounded_buffer
   glBufferData(GL_ARRAY_BUFFER, vertexPosition.size() * sizeof(GLfloat), vertexPosition.data(), GL_STATIC_DRAW);
 
+  //__linking_the_position_attributes_in_the_VAO
   //__enabling_the_vertex_attrib_at_index_0__in_this_case_position_which_will_be_accessed_by_the_vertex_shader
   glEnableVertexAttribArray(0);
   //__structuring_the_vertex_data_at_index_0
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+  //__setting_the_color_buffer
+  glGenBuffers(1, &g_VertexBufferObjectColors);
+  glBindBuffer(GL_ARRAY_BUFFER, g_VertexBufferObjectColors);
+  glBufferData(GL_ARRAY_BUFFER, vertexColors.size() * sizeof(GLfloat), vertexColors.data(), GL_STATIC_DRAW);
+  //__linking_the_color_attributes_in_the_VAO
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
   //__unbinding_the_current_VAO
   glBindVertexArray(0);
   //__disableing_the_vertex_attrib_at_index_0
   glDisableVertexAttribArray(0);
+  //__disableing_the_vertex_attrib_at_index_1
+  glDisableVertexAttribArray(1);
 }
 
 GLFWwindow *InitializeProgram() {
