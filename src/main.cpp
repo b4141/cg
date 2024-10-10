@@ -1,8 +1,10 @@
+#include <fstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 //__global_settings__globals_are_prefixed_with_[g_]_in_this_app
 const unsigned int g_SCR_WIDTH = 640;
@@ -13,19 +15,6 @@ GLuint g_VertexArrayObject = 0;
 GLuint g_VertexBufferObject = 0;
 //__program_object_for_the_shaders
 GLuint g_GraphicsPipelineShaderProgram = 0;
-//__shaders_source_code
-const std::string g_VertexShaderSource =
-    "#version 330 core\n"
-    "in vec4 position;\n"
-    "void main(){\n"
-    "    gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
-    "}\n";
-const std::string g_FragmentShaderSource =
-    "#version 330 core\n"
-    "out vec4 color;\n"
-    "void main(){\n"
-    "    color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
-    "}\n";
 
 void HandleLog(bool err, const std::string &message) {
   if (err) {
@@ -45,6 +34,23 @@ void ProcessInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
+}
+
+std::string LoadShaderAsString(const std::string &filename) {
+  //__resulting_shader_program_loaded_as_a_single_string
+  std::string result = "";
+  std::string line = "";
+  std::ifstream file(filename.c_str());
+  if (file.is_open()) {
+    while (std::getline(file, line)) {
+      result += line + '\n';
+    }
+    file.close();
+  } else {
+    HandleLog(true, "failed to load the shader from source (" + filename + ")");
+  }
+
+  return result;
 }
 
 GLuint Compileshader(GLuint type, const std::string &source) {
@@ -111,8 +117,11 @@ GLuint CreateShaderProgram(const std::string &vertexShader, const std::string &f
 }
 
 void CreateGraphicsPipeline() {
+  //__loading_the_vertex_and_fragment_shaders_source_code
+  std::string vertexShaderSource = LoadShaderAsString("./shaders/vertexShader.glsl");
+  std::string fragmentShaderSource = LoadShaderAsString("./shaders/fragmentShader.glsl");
   //__this_function_takes_the_vertex_and_fragment_shaders_and_compiles_them
-  g_GraphicsPipelineShaderProgram = CreateShaderProgram(g_VertexShaderSource, g_FragmentShaderSource);
+  g_GraphicsPipelineShaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
 }
 
 void VertexSpecification() {
