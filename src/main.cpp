@@ -126,14 +126,19 @@ void CreateGraphicsPipeline() {
 void VertexSpecification() {
   //__lives_on_the_CPU
   //__both_vertex_position_and_color__3_for_position_x_y_z__3_for_color_r_g_b__for_each_vertex
+  //__notice_the_winding_direction_for_each_triangle_is_counter_clockwise_
+  //__the_winding_direction_is_not_used_but_it_can_be_set_to_eather_CW_or_CCW
   const std::vector<GLfloat> vertexData{
-      -0.8f, -0.8f, 0.0f,
-      1.0f, 0.0f, 0.0f,
-      0.8f, -0.8f, 0.0f,
-      0.0f, 1.0f, 0.0f,
-      0.0f, 0.8f, 0.0f,
-      0.0f, 0.0f, 1.0f};
+      -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+      0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+      -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
 
+      0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+      0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+      -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+      // -0.5f, 0.5f, 0.0f, 0.1f, 0.4f, 0.5f
   //__VBO_are_buffers_on_the_GPU_vram_to_store_the_data
   //__VAO_are_the_way_we_can_access_attributes_to_the_data_stored_in_the_VBO_using_shaders
 
@@ -229,7 +234,7 @@ void Draw() {
   //__selecting_the_vertex_buffer_object_to_enable
   glBindBuffer(GL_ARRAY_BUFFER, g_VertexBufferObject);
   //__rendering_the_data__from_0_to_3_vertices
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   //__stop_using_the_current_graphics_pipeline
   //__this_is_not_necessary_if_there_is_only_one_graphics_pipeline
   glUseProgram(0);
