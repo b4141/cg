@@ -12,7 +12,6 @@ const unsigned int g_SCR_HEIGHT = 400;
 GLuint g_VertexArrayObject = 0;
 //__VBO
 GLuint g_VertexBufferObject = 0;
-GLuint g_VertexBufferObjectColors = 0;
 //__program_object_for_the_shaders
 GLuint g_GraphicsPipelineShaderProgram = 0;
 
@@ -126,14 +125,13 @@ void CreateGraphicsPipeline() {
 
 void VertexSpecification() {
   //__lives_on_the_CPU
-  const std::vector<GLfloat> vertexPosition{
+  //__both_vertex_position_and_color__3_for_position_x_y_z__3_for_color_r_g_b__for_each_vertex
+  const std::vector<GLfloat> vertexData{
       -0.8f, -0.8f, 0.0f,
-      0.8f, -0.8f, 0.0f,
-      0.0f, 0.8f, 0.0f};
-
-  const std::vector<GLfloat> vertexColors{
       1.0f, 0.0f, 0.0f,
+      0.8f, -0.8f, 0.0f,
       0.0f, 1.0f, 0.0f,
+      0.0f, 0.8f, 0.0f,
       0.0f, 0.0f, 1.0f};
 
   //__VBO_are_buffers_on_the_GPU_vram_to_store_the_data
@@ -155,21 +153,17 @@ void VertexSpecification() {
   glBindBuffer(GL_ARRAY_BUFFER, g_VertexBufferObject);
   //__sending_the_data_to_the_currently_binded_buffer__sending_data_to_GPU
   //__when_sending_the_data_to_the_target_GL_ARRAY_BUFFER_it_store_it_in_the_bounded_buffer
-  glBufferData(GL_ARRAY_BUFFER, vertexPosition.size() * sizeof(GLfloat), vertexPosition.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(GLfloat), vertexData.data(), GL_STATIC_DRAW);
 
   //__linking_the_position_attributes_in_the_VAO
   //__enabling_the_vertex_attrib_at_index_0__in_this_case_position_which_will_be_accessed_by_the_vertex_shader
   glEnableVertexAttribArray(0);
   //__structuring_the_vertex_data_at_index_0
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)0);
 
-  //__setting_the_color_buffer
-  glGenBuffers(1, &g_VertexBufferObjectColors);
-  glBindBuffer(GL_ARRAY_BUFFER, g_VertexBufferObjectColors);
-  glBufferData(GL_ARRAY_BUFFER, vertexColors.size() * sizeof(GLfloat), vertexColors.data(), GL_STATIC_DRAW);
   //__linking_the_color_attributes_in_the_VAO
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid *)(3 * sizeof(GLfloat)));
 
   //__unbinding_the_current_VAO
   glBindVertexArray(0);
